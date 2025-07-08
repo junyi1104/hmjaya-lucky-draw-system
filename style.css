@@ -32,3 +32,16 @@ button, .export-btn {
 button:hover, .export-btn:hover {
     background: #218838;
 }
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(3600deg); /* 10 full rotations */
+    }
+}
+
+.wheel.spin {
+    animation: spin 4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
