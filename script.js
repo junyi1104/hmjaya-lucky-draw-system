@@ -1,10 +1,13 @@
 const canvas = document.getElementById("wheelcanvas");
 const ctx = canvas.getContext("2d");
 
+
 let names = JSON.parse(localStorage.getItem("names") || "[]");
 let currentAngle = 0;
 let autoSpin = true;
 let autoSpinId = null;
+let winners = JSON.parse(localStorage.getItem("winners") || "[]");
+
 
 function updateUserList() {
     const userlist = document.getElementById("userlist");
@@ -217,6 +220,18 @@ function spinWheel() {
             setTimeout(() => {
                 alert("🎯 Winner is: " + winnerName);
                 document.getElementById("winner-name").innerText = winnerName;
+
+                // 移除中奖者
+                names.splice(winnerIndex, 1);
+                localStorage.setItem("names", JSON.stringify(names));
+
+                // 添加到中奖名单
+                winners.push(winnerName);
+                localStorage.setItem("winners", JSON.stringify(winners));
+
+                drawWheel();
+                updateUserList();
+                updateWinnerList();
             }, 100);
         }
     }
@@ -273,8 +288,51 @@ function uploadNameList(event) {
     }
 })();
 
+function updateWinnerList() {
+    const winnerList = document.getElementById("winner-list");
+    if (!winnerList) return;
+
+    let html = "";
+    if (winners.length === 0) {
+        html += "<p><em>No winners yet</em></p>";
+    } else {
+        html += "<b>Winners:</b><ul>";
+        winners.forEach(name => {
+            html += `<li>${name}</li>`;
+        });
+        html += "</ul>";
+        html += `<button onclick="clearWinners()" style="margin-top:12px;background:#dc3545;">Clear Winners</button>`;
+    }
+    winnerList.innerHTML = html;
+}
+
+function clearWinners() {
+    if (confirm("Are you sure you want to clear the winner list?")) {
+        winners = [];
+        localStorage.setItem("winners", JSON.stringify(winners));
+        updateWinnerList();
+    }
+}
+
+function toggleMusic() {
+    const audio = document.getElementById("bgMusic");
+    if (!audio) return;
+
+    if (audio.paused) {
+        audio.play().catch(e => {
+            alert("Auto-play blocked. Click again to enable music.");
+        });
+    } else {
+        audio.pause();
+    }
+}
+
+
+
 (function initializeWheelApp() {
     drawWheel();
     updateUserList();
     startAutoSpin();
+    updateWinnerList();
+
 })();
