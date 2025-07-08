@@ -5,7 +5,6 @@ let names = JSON.parse(localStorage.getItem("names") || "[]");
 let currentAngle = 0;
 let autoSpin = true;
 let autoSpinId = null;
-let bgImage = null;
 
 function updateUserList() {
     const userlist = document.getElementById("userlist");
@@ -16,8 +15,8 @@ function updateUserList() {
     } else {
         html += "<b>User List:</b><ul>";
         for (let i = 0; i < names.length; i++) {
-            html +=
-                `<li>
+            html += `
+                <li>
                     <span>${names[i]}</span>
                     <button onclick="removeUser(${i})">Remove</button>
                 </li>`;
@@ -36,8 +35,7 @@ function getTitleEditHtml() {
             <label for="editTitleInput"><b>Edit Title:</b></label><br>
             <input id="editTitleInput" type="text" value="${currentTitle.replace(/"/g, '&quot;')}" style="width:80%;padding:6px;margin-top:6px;">
             <button onclick="applyTitleEdit()" style="margin-left:8px;">Apply</button>
-        </div>
-    `;
+        </div>`;
 }
 
 function applyTitleEdit() {
@@ -45,9 +43,7 @@ function applyTitleEdit() {
     const title = document.querySelector(".main-header h1");
     if (input && title) {
         const newTitle = input.value.trim();
-        if (newTitle) {
-            title.textContent = newTitle;
-        }
+        if (newTitle) title.textContent = newTitle;
     }
 }
 
@@ -68,42 +64,58 @@ function removeAllUsers() {
 }
 
 function drawWheel(angle = 0) {
-    // Make canvas transparent by not filling the background
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.clearRect(0, 0, width, height);
+
     const count = names.length;
     if (count === 0) return;
+
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(centerX, centerY) - 10; // 留一点边距
+
     const arcSize = (2 * Math.PI) / count;
+
     for (let i = 0; i < count; i++) {
         ctx.save();
-        ctx.translate(250, 250);
+        ctx.translate(centerX, centerY);
         ctx.rotate(angle);
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.fillStyle = `hsl(${i * 360 / count}, 70%, 70%)`;
-        ctx.arc(0, 0, 250, i * arcSize, (i + 1) * arcSize);
+        ctx.fillStyle = `hsl(${(i * 360) / count}, 70%, 70%)`;
+        ctx.arc(0, 0, radius, i * arcSize, (i + 1) * arcSize);
         ctx.lineTo(0, 0);
         ctx.fill();
+
+        // 文字
         ctx.fillStyle = "black";
         ctx.textAlign = "right";
-        ctx.font = "16px Arial";
+        ctx.font = `${radius * 0.07}px Arial`;
         ctx.save();
         ctx.rotate(i * arcSize + arcSize / 2);
-        ctx.fillText(names[i], 240, 10);
+        ctx.fillText(names[i], radius - 10, 10);
         ctx.restore();
+
         ctx.restore();
     }
-    // Draw pointer
+
+    // 指针
     ctx.save();
-    ctx.translate(250, 250);
+    ctx.translate(centerX, centerY);
     ctx.beginPath();
-    ctx.moveTo(0, -220);
-    ctx.lineTo(-20, -260);
-    ctx.lineTo(20, -260);
+    ctx.moveTo(0, -radius * 0.88);
+    ctx.lineTo(-20, -radius - 10);
+    ctx.lineTo(20, -radius - 10);
     ctx.closePath();
     ctx.fillStyle = "red";
     ctx.fill();
     ctx.restore();
 }
+
 
 function insertName() {
     const input = document.getElementById("username");
@@ -122,11 +134,8 @@ function insertName() {
     updateUserList();
 }
 
-// Add this event listener to allow "Enter" key to insert name
 document.getElementById("username").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-        insertName();
-    }
+    if (e.key === "Enter") insertName();
 });
 
 function exportNames() {
@@ -145,7 +154,6 @@ function uploadBackground(event) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-        // Set website background instead of canvas background
         document.body.style.backgroundImage = `url('${e.target.result}')`;
         document.body.style.backgroundSize = "cover";
         document.body.style.backgroundRepeat = "no-repeat";
@@ -158,7 +166,7 @@ function startAutoSpin() {
     autoSpin = true;
     function spin() {
         if (!autoSpin) return;
-        currentAngle += 0.01; // Slow rotation
+        currentAngle += 0.01;
         drawWheel(currentAngle);
         autoSpinId = requestAnimationFrame(spin);
     }
@@ -178,61 +186,62 @@ function spinWheel() {
         alert("No names to draw.");
         return;
     }
+
     stopAutoSpin();
     const count = names.length;
     const arcSize = (2 * Math.PI) / count;
-    const winnerIndex = Math.floor(Math.random() * count);
-
-    // Calculate final angle so the winner lands at the pointer (top)
-    const randomTurns = 5 + Math.random() * 2; // 5-7 spins
-    const finalAngle = (2 * Math.PI * randomTurns) - (winnerIndex * arcSize + arcSize / 2);
+    const spins = 5 + Math.random() * 2;
+    const extraRotation = Math.random() * 2 * Math.PI;
+    const finalAngle = currentAngle + spins * 2 * Math.PI + extraRotation;
 
     let start = null;
-    const duration = 4000; // ms
-    let lastAngle = currentAngle;
+    const duration = 4000;
+    const initialAngle = currentAngle;
 
     function animateSpin(timestamp) {
         if (!start) start = timestamp;
         const elapsed = timestamp - start;
         const progress = Math.min(elapsed / duration, 1);
-        // Ease out
         const ease = 1 - Math.pow(1 - progress, 3);
-        const angle = lastAngle + (finalAngle - lastAngle) * ease;
+        const angle = initialAngle + (finalAngle - initialAngle) * ease;
         drawWheel(angle);
+
         if (progress < 1) {
             requestAnimationFrame(animateSpin);
         } else {
             currentAngle = angle % (2 * Math.PI);
+            const pointerAngle = (1.5 * Math.PI - currentAngle + 2 * Math.PI) % (2 * Math.PI);
+            const winnerIndex = Math.floor(pointerAngle / arcSize);
+            const winnerName = names[winnerIndex];
+
             setTimeout(() => {
-                alert("🎉 Winner is: " + names[winnerIndex]);
+                alert("🎯 Winner is: " + winnerName);
+                document.getElementById("winner-name").innerText = winnerName;
             }, 100);
         }
     }
+
     requestAnimationFrame(animateSpin);
 }
 
 function toggleAdmin() {
-    // Show/hide the user list box inside the main-flex, not a pop out box
     const userlist = document.getElementById("userlist");
-    if (userlist.style.display === "none" || userlist.style.display === "") {
-        userlist.style.display = "block";
-    } else {
-        userlist.style.display = "none";
-    }
+    const panel = document.getElementById("adminPanel");
+
+    const isVisible = userlist.style.display !== "none" && userlist.style.display !== "";
+    userlist.style.display = isVisible ? "none" : "block";
+    if (panel) panel.style.display = isVisible ? "none" : "flex";
 }
 
-// Add this function to handle file upload and add names
 function uploadNameList(event) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
         const content = e.target.result;
-        // Split by line, trim, and filter out empty lines
         const lines = content.split(/\r?\n/).map(line => line.trim()).filter(line => line);
         let added = false;
         for (const line of lines) {
-            // Avoid duplicates (case-insensitive)
             if (!names.some(n => n.toLowerCase() === line.toLowerCase())) {
                 names.push(line);
                 added = true;
@@ -247,45 +256,25 @@ function uploadNameList(event) {
     reader.readAsText(file);
 }
 
-// Initial draw and start auto-spin on load
-drawWheel();
-updateUserList();
-startAutoSpin();
+(function setupUploadButton() {
+    const hiddenInput = document.createElement("input");
+    hiddenInput.type = "file";
+    hiddenInput.accept = ".txt";
+    hiddenInput.style.display = "none";
+    hiddenInput.addEventListener("change", uploadNameList);
+    document.body.appendChild(hiddenInput);
 
-// Initial draw and start auto-spin on load
-drawWheel();
-updateUserList();
-startAutoSpin();
-// Initial draw and start auto-spin on load
-drawWheel();
-updateUserList();
-startAutoSpin();
-
-// Add this after DOM is loaded or at the end of the file
-// Create the upload input if not present and wire up the handler
-(function() {
-    // Try to find or create the upload input for name list
-    let uploadInput = document.getElementById("nameListUpload");
-    if (!uploadInput) {
-        uploadInput = document.createElement("input");
-        uploadInput.type = "file";
-        uploadInput.id = "nameListUpload";
-        uploadInput.accept = ".txt";
-        uploadInput.style.display = "none";
-        document.body.appendChild(uploadInput);
-    }
-    uploadInput.addEventListener("change", uploadNameList);
-
-    // Add a button to trigger the upload (if not already present)
-    let headerActions = document.querySelector(".header-actions");
-    if (headerActions && !document.getElementById("nameListUploadBtn")) {
-        const btn = document.createElement("button");
-        btn.id = "nameListUploadBtn";
-        btn.textContent = "Upload Name List";
-        btn.onclick = function() {
-            uploadInput.value = ""; // reset so same file can be uploaded again
-            uploadInput.click();
+    const uploadBtn = document.getElementById("nameListUploadBtn");
+    if (uploadBtn) {
+        uploadBtn.onclick = function () {
+            hiddenInput.value = "";
+            hiddenInput.click();
         };
-        headerActions.appendChild(btn);
     }
+})();
+
+(function initializeWheelApp() {
+    drawWheel();
+    updateUserList();
+    startAutoSpin();
 })();
