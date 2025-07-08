@@ -36,12 +36,13 @@
   <div class="main-flex">
     <!-- Winner Box -->
     <div class="winner-container">
-      <ul id="winner-list">
+      <div class="winner-container">
         <div class="winner-box">
           <h2>Winner:</h2>
           <p id="winner-name"></p>
         </div>
-      </ul>
+        <div id="winner-list" style="margin-top: 20px; text-align: left;"></div>
+      </div>
     </div>
 
     <!-- Wheel and Input -->
@@ -70,4 +71,10 @@
   </script>
   <script src="script.js"></script>
 </body>
+<audio id="bgMusic" loop autoplay>
+  <source src="music/background.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
+<button onclick="toggleMusic()" style="position:fixed; bottom:20px; right:20px; z-index:1000;">🔊 Toggle Music</button>
+
 </html>
