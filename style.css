@@ -6,11 +6,16 @@ body {
 
 .container {
     margin: 50px auto;
-    width: 600px;
-    background: white;
+    width: 1800px;
+    background: transparent; /* Make container background transparent */
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Ensure canvas is transparent */
+canvas {
+    background: transparent !important;
 }
 
 input {
@@ -44,4 +49,108 @@ button:hover, .export-btn:hover {
 
 .wheel.spin {
     animation: spin 4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+.wheel-user-flex {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.main-flex {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.wheel-container {
+    width: 600px;
+    min-width: 600px;
+    background: transparent;
+}
+
+.userlist-container {
+    width: 350px;
+    min-width: 260px;
+    background: transparent;
+    box-shadow: none;
+    padding-top: 60px;
+}
+
+.user-list-box {
+    min-width: 220px;
+    max-width: 350px;
+    max-height: 500px;
+    margin: 40px auto 0 auto;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 18px;
+    text-align: left;
+    font-size: 16px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.08);
+    /* Hide by default, show only when admin toggled */
+    display: none;
+}
+
+.user-list-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.user-list-box li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 0;
+    border-bottom: 1px solid #28a745; /* Change line to green */
+}
+
+.user-list-box li:last-child {
+    border-bottom: none;
+}
+
+/* Optional: style remove buttons in the user list */
+.user-list-box button {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.user-list-box button:hover {
+    background: #b52a37;
+}
+
+.main-header {
+    width: 100%;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 18px 0 10px 0;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.main-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.2em;
+    letter-spacing: 1px;
+    padding-left: 40px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-right: 40px;
 }
