@@ -1,11 +1,12 @@
 const canvas = document.getElementById("wheelcanvas");
 const ctx = canvas.getContext("2d");
 
-let names = [];
-let angle = 0;
+let names = JSON.parse(localStorage.getItem("names") || "[]");
 
 function drawWheel() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     const count = names.length;
+    if (count === 0) return;
     const arcSize = (2 * Math.PI) / count;
     for (let i = 0; i < count; i++) {
         ctx.beginPath();
@@ -24,18 +25,35 @@ function drawWheel() {
     }
 }
 
+function insertName() {
+    const input = document.getElementById("username");
+    const name = input.value.trim();
+    if (!name) return;
+    names.push(name);
+    localStorage.setItem("names", JSON.stringify(names));
+    input.value = "";
+    drawWheel();
+}
+
+function exportNames() {
+    const content = names.join("\n");
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "names.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
 function spinWheel() {
     if (names.length === 0) {
         alert("No names to draw.");
         return;
     }
-    let winnerIndex = Math.floor(Math.random() * names.length);
-    alert("Winner is: " + names[winnerIndex]);
+    const winnerIndex = Math.floor(Math.random() * names.length);
+    alert("🎉 Winner is: " + names[winnerIndex]);
 }
 
-fetch("names.txt")
-    .then(res => res.text())
-    .then(text => {
-        names = text.trim().split("\n").filter(Boolean);
-        drawWheel();
-    });
+drawWheel();
+
