@@ -2,19 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lucky Wheel Draw</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <header class="main-header">
         <h1>Lucky Wheel Draw</h1>
-        <input type="text" id="username" placeholder="Enter name">
-        <button onclick="insertName()">Insert</button>
-        <button onclick="exportNames()">Export Names</button>
-        <canvas id="wheelcanvas" width="500" height="500"></canvas>
-        <button onclick="spinWheel()">Spin</button>
+        <div class="header-actions">
+            <button id="adminBtn" onclick="toggleAdmin()">Admin</button>
+            <button onclick="exportNames()">Export Names</button>
+            <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBackground(event)">
+            <button onclick="document.getElementById('bgUpload').click()">Upload Background Photo</button>
+        </div>
+    </header>
+    <div class="main-flex">
+        <div class="container wheel-container">
+            <input type="text" id="username" placeholder="Enter name">
+            <button onclick="insertName()">Insert</button>
+            <br><br>
+            <canvas id="wheelcanvas" width="500" height="500"></canvas>
+            <button onclick="spinWheel()">Spin</button>
+        </div>
+        <div id="userlist" class="user-list-box" style="display:none;"></div>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
-
