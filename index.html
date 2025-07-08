@@ -8,15 +8,13 @@
 <body>
     <div class="container">
         <h1>Lucky Wheel Draw</h1>
-        <form action="save_name.php" method="POST">
-            <input type="text" name="username" placeholder="Enter name" required>
-            <button type="submit">Insert</button>
-        </form>
-        <br>
-        <a href="export_excel.php" class="export-btn">Export to Excel</a>
+        <input type="text" id="username" placeholder="Enter name">
+        <button onclick="insertName()">Insert</button>
+        <button onclick="exportNames()">Export Names</button>
         <canvas id="wheelcanvas" width="500" height="500"></canvas>
         <button onclick="spinWheel()">Spin</button>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
+
