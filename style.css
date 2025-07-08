@@ -236,3 +236,15 @@ button:hover, .export-btn:hover {
   margin: 0 auto;
 }
 
+#winner-list ul {
+  padding-left: 18px;
+  margin-top: 10px;
+}
+
+#winner-list li {
+  font-size: 14px;
+  padding: 2px 0;
+  color: #333;
+}
+
+
