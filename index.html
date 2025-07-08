@@ -7,45 +7,75 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <button class="admin-toggle-btn" onclick="toggleAdminPanel()">Admin</button>
 
-  <!-- Slide-out Panel -->
+  <!-- Admin toggle button（管理按钮） -->
+  <button class="admin-toggle-btn" onclick="showAdminPanel()">Admin</button>
+
+  <!-- Admin panel（滑出式管理面板） -->
   <div id="adminPanel" class="admin-panel">
-    <h3>Admin Panel</h3>
+    <!-- 顶部栏含标题与关闭按钮 -->
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="margin:0;">Admin Panel</h3>
+      <button onclick="closeAdminPanel()" style="background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Upload background -->
     <button onclick="document.getElementById('bgUpload').click()">Upload Background</button>
     <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBackground(event)" />
 
+    <!-- Upload name list -->
     <button onclick="document.getElementById('nameListUpload').click()">Upload Name List</button>
     <input type="file" id="nameListUpload" accept=".txt" style="display:none" onchange="uploadNameList(event)" />
 
+    <!-- Export -->
     <button onclick="exportNames()">Export Names</button>
 
+    <!-- Show/hide user list -->
     <button onclick="toggleUserList()">Show/Hide User List</button>
 
+    <!-- Edit title -->
     <div style="margin-top:12px;">
       <label for="editTitleInput"><b>Edit Title:</b></label><br />
-      <input id="editTitleInput" type="text" style="width:100%;padding:6px;margin-top:6px;" />
-      <button onclick="applyTitleEdit()" style="margin-top:8px;">Apply</button>
+      <input 
+        id="editTitleInput" 
+        type="text" 
+        oninput="updateLiveTitle(this.value)" 
+        style="width:100%;padding:6px;margin-top:6px;" 
+      />
+    </div>
+
+    <!-- Title color picker -->
+    <div style="margin-top:16px;">
+      <label for="titleColorPicker"><b>title color picker：</b></label><br />
+      <input type="color" id="titleColorPicker" style="width:60px;height:40px;border:none;cursor:pointer;" />
+    </div>
+
+    <!-- Winner List 字体颜色选择器 -->
+    <div style="margin-top:16px;">
+      <label for="winnerFontColorPicker"><b>winner list color picker：</b></label><br />
+      <input type="color" id="winnerFontColorPicker" style="width:60px;height:40px;border:none;cursor:pointer;" />
     </div>
   </div>
 
-  <header class="main-header">
-    <h1>Lucky Wheel Draw</h1>
-  </header>
 
-  <div class="main-flex">
-    <!-- Winner Box -->
+    <!-- Page Header（页面标题） -->
+    <header class="main-header">
+      <h1>Lucky Wheel Draw</h1>
+    </header>
+
+    <!-- Main layout（主布局） -->
+    <div class="main-flex">
+
+    <!-- Winner box（历史中奖者名单） -->
     <div class="winner-container">
-      <div class="winner-container">
-        <div class="winner-box">
-          <h2>Winner:</h2>
-          <p id="winner-name"></p>
-        </div>
-        <div id="winner-list" style="margin-top: 20px; text-align: left;"></div>
+      <div id="winner-list">
+        <h3 style="margin-top: 0; color: #004466;">🎉 Winner List</h3>
+        <ul></ul> <!-- JS 会填入 <li> -->
       </div>
     </div>
 
-    <!-- Wheel and Input -->
+
+    <!-- Wheel & input（转盘和输入框） -->
     <div class="container wheel-container">
       <input type="text" id="username" placeholder="Enter name">
       <button onclick="insertName()">Insert</button>
@@ -54,27 +84,47 @@
       <button onclick="spinWheel()">Spin</button>
     </div>
 
-    <!-- User list -->
+    <!-- User list container（用户名单列表） -->
     <div id="userlist" class="user-list-box" style="display:none;"></div>
   </div>
 
+  <!-- Background music（背景音乐播放器） -->
+  <audio id="bgMusic" loop autoplay>
+    <source src="music/background.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Music toggle button（音乐开关按钮） -->
+  <button class="music-toggle-btn" onclick="toggleMusic()" style="position:fixed; bottom:20px; right:20px; z-index:1000;">
+    🔊 Toggle Music
+  </button>
+
+  <!-- Basic script for toggling（基础功能控制） -->
   <script>
+    // Toggle admin panel（切换管理面板）
     function toggleAdminPanel() {
       document.getElementById('adminPanel').classList.toggle('show');
     }
 
+    // Toggle user list（切换用户列表）
     function toggleUserList() {
       const list = document.getElementById("userlist");
       if (!list) return;
       list.style.display = list.style.display === "none" || !list.style.display ? "block" : "none";
     }
+
+    // Toggle background music（控制音乐播放/暂停）
+    function toggleMusic() {
+      const bgMusic = document.getElementById("bgMusic");
+      if (bgMusic.paused) {
+        bgMusic.play();
+      } else {
+        bgMusic.pause();
+      }
+    }
   </script>
+
+  <!-- External JS logic（主功能逻辑） -->
   <script src="script.js"></script>
 </body>
-<audio id="bgMusic" loop autoplay>
-  <source src="music/background.mp3" type="audio/mpeg" />
-  Your browser does not support the audio element.
-</audio>
-<button onclick="toggleMusic()" style="position:fixed; bottom:20px; right:20px; z-index:1000;">🔊 Toggle Music</button>
-
 </html>
