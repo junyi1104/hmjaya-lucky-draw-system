@@ -1,224 +1,223 @@
+/* =====================
+   Global Styles 全局样式
+   ===================== */
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: transparent;
+    z-index: -1;
+}
+
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background: transparent;
+    background: transparent; /* 背景透明，方便放背景图 */
+    background-size: cover;             /* 图片填满屏幕 */
+    background-position: center center; /* 水平垂直居中 */
+    background-repeat: no-repeat;       /* 不重复 */
+    background-attachment: fixed;       /* 滚动时背景固定 */
+    min-height: 100vh;                  /* 最小高度占满屏幕 */
+    background-color: #000;             /* 作为加载失败时的底色 */
 }
 
+/* =====================
+   Container 容器样式
+   ===================== */
 .container {
-    margin: 50px auto;
-    width: 1800px;
-    background: transparent; /* Make container background transparent */
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin: 50px auto;
+  width: 1800px;
+  background: transparent;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-/* Ensure canvas is transparent */
 canvas {
-    background: transparent !important;
+  background: transparent !important; /* 确保 canvas 背景透明 */
 }
 
 input {
-    padding: 10px;
-    width: 60%;
-    margin-right: 10px;
+  padding: 10px;
+  width: 60%;
+  margin-right: 10px;
 }
 
+/* =====================
+   Buttons 按钮样式
+   ===================== */
 button, .export-btn {
-    padding: 10px 20px;
-    background: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    text-decoration: none;
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  text-decoration: none;
 }
 
 button:hover, .export-btn:hover {
-    background: #218838;
+  background: #218838;
 }
 
+/* =====================
+   Animation 动画
+   ===================== */
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(3600deg); /* 10 full rotations */
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(3600deg); /* 10 圈旋转 */
+  }
 }
 
 .wheel.spin {
-    animation: spin 4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: spin 4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
-.wheel-user-flex {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 30px;
+/* =====================
+   Flex Layout 布局
+   ===================== */
+.wheel-user-flex, .main-flex {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
 }
 
 .main-flex {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 40px;
+  gap: 40px;
 }
 
 .wheel-container {
-    width: 800px;
-    min-width: 800px;
-    background: transparent;
+  width: 1000px;
+  min-width: 1000px;
+  background: transparent;
 }
 
 .userlist-container {
-    width: 350px;
-    min-width: 260px;
-    background: transparent;
-    box-shadow: none;
-    padding-top: 60px;
+  width: 350px;
+  min-width: 260px;
+  background: transparent;
+  box-shadow: none;
+  padding-top: 60px;
 }
 
+/* =====================
+   User List 用户列表
+   ===================== */
 .user-list-box {
-    min-width: 220px;
-    max-width: 350px;
-    max-height: 500px;
-    margin: 40px auto 0 auto;
-    overflow-y: auto;
-    background: rgba(255,255,255,0.85);
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 18px;
-    text-align: left;
-    font-size: 16px;
-    box-shadow: 0 0 6px rgba(0,0,0,0.08);
-    /* Hide by default, show only when admin toggled */
-    display: none;
+  min-width: 220px;
+  max-width: 350px;
+  max-height: 500px;
+  margin: 40px auto 0 auto;
+  overflow-y: auto;
+  background: rgba(255,255,255,0.85); /* 半透明白色背景 */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 18px;
+  text-align: left;
+  font-size: 16px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.08);
+  display: none; /* 默认隐藏，仅 admin 时显示 */
 }
 
 .user-list-box ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .user-list-box li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2px 0;
-    border-bottom: 1px solid #28a745; /* Change line to green */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+  border-bottom: 1px solid #28a745; /* 绿色分隔线 */
 }
 
 .user-list-box li:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
-/* Optional: style remove buttons in the user list */
 .user-list-box button {
-    background: #dc3545;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    margin-left: 8px;
-    padding: 2px 8px;
-    font-size: 12px;
-    cursor: pointer;
-}
-.user-list-box button:hover {
-    background: #b52a37;
+  background: #dc3545; /* 红色移除按钮 */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
 }
 
+.user-list-box button:hover {
+  background: #b52a37;
+}
+
+/* =====================
+   Header 标题栏
+   ===================== */
 .main-header {
-    width: 100%;
-    background: transparent;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    padding: 18px 0 10px 0;
-    margin-bottom: 30px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-     position: relative;
-  z-index: 1; /* Set the z-index of the header to 2 */
+  width: 100%;
+  background: transparent;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 18px 0 10px 0;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
 }
 
 .main-header h1 {
-    margin: 0 0 10px 0;
-    font-size: 2.2em;
-    letter-spacing: 1px;
-    padding: 0 100px;
-    color: #00698f; /* Change header text color to match the theme */
-    text-align: center; /* Center the header text */
+  margin: 0 0 10px 0;
+  font-size: 2.2em;
+  letter-spacing: 1px;
+  padding: 0 100px;
+  color: #00698f; /* 蓝绿色主题色 */
+  text-align: center;
 }
 
 .header-actions {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    margin-right: 40px;
-}
-
-/* Add styles for the winner container */
-.winner-container {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  transform: translate(100px, 0);
-  width: 170px;
-  height: 170px;
-  background-color: #f0f0f0;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Update styles for the winner box */
-.winner-box {
-  width: 100%;
-  height: 100%;
   display: flex;
-  flex-direction: column;
+  gap: 16px;
   align-items: center;
-  justify-content: center;
+  margin-right: 40px;
 }
 
-.winner-box h2 {
-  margin: 0px 40px 50px 0px;
-}
 
-.winner-box #winner-name {
-  font-size: 24px;
-  font-weight: bold;
-  color: #00698f;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-right: 40px;
-}
-
+/* =====================
+   Admin Panel 管理面板
+   ===================== */
 .admin-panel {
   position: fixed;
   top: 0;
-  right: -400px; /* 默认隐藏在右侧 */
+  right: -400px; /* 默认隐藏 */
   width: 300px;
   height: 100%;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.3);/* 更淡更朦胧 */
+  backdrop-filter: blur(10px); /* 朦胧玻璃效果 */
+  -webkit-backdrop-filter: blur(10px); /* Safari 支持 */
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.3); /* 微弱边界线 */
   padding: 20px;
-  display: flex; /* 始终用 flex，让动画有效 */
+  display: flex;
   flex-direction: column;
   gap: 16px;
   transition: right 0.3s ease;
   z-index: 999;
+  color: #ffffff; /* 确保文字是白色 */
 }
 
+
 .admin-panel.show {
-  right: 0; /* 滑出来 */
+  right: 0; /* 滑出显示 */
 }
 
 .admin-toggle-btn {
@@ -228,23 +227,79 @@ button:hover, .export-btn:hover {
   z-index: 1000;
 }
 
+/* =====================
+   Wheel 转盘
+   ===================== */
 #wheelcanvas {
   width: 100%;
-  max-width: 500px; /* 你可以调大一点，例如 600 或 700 */
+  max-width: 10000px; /* 可根据需求扩大尺寸 */
   height: auto;
   display: block;
   margin: 0 auto;
 }
 
+/* =====================
+   Winner List 美化后的中奖名单
+   ===================== */
+#winner-list {
+  position: fixed;
+  top: 100px;
+  left: 40px;
+  z-index: 999;
+
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  color: #000;
+  max-height: 250px;
+  max-width: 220px;
+  min-width: 180px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+
+
 #winner-list ul {
-  padding-left: 18px;
-  margin-top: 10px;
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 10px 0 0 0;
 }
 
 #winner-list li {
-  font-size: 14px;
-  padding: 2px 0;
-  color: #333;
+  padding: 4px 0;
+  font-weight: 500;
+}
+
+#winner-list h3 {
+  margin-top: 0;
+}
+
+#winner-list li:last-child {
+  border-bottom: none;
+}
+
+#winner-list button {
+  margin-top: 10px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+#winner-list button:hover {
+  background: #b52a37;
 }
 
 
+/* Admin 面板内按钮的 hover 效果 */
+.admin-panel button:hover {
+  color: red; /* 悬停时文字变红 */
+}
