@@ -10,22 +10,23 @@ let bgImage = null;
 function updateUserList() {
     const userlist = document.getElementById("userlist");
     if (!userlist) return;
+    let html = "";
     if (names.length === 0) {
-        userlist.innerHTML = "<em>No users</em>";
-        // Add title edit UI even if no users
-        userlist.innerHTML += getTitleEditHtml();
-        return;
+        html += "<em>No users</em>";
+    } else {
+        html += "<b>User List:</b><ul>";
+        for (let i = 0; i < names.length; i++) {
+            html +=
+                `<li>
+                    <span>${names[i]}</span>
+                    <button onclick="removeUser(${i})">Remove</button>
+                </li>`;
+        }
+        html += "</ul>";
+        html += `<button onclick="removeAllUsers()" style="margin-top:16px;background:#dc3545;">Remove All</button>`;
     }
-    userlist.innerHTML = "<b>User List:</b><ul>";
-    for (let i = 0; i < names.length; i++) {
-        userlist.innerHTML +=
-            `<li>
-                <span>${names[i]}</span>
-                <button onclick="removeUser(${i})">Remove</button>
-            </li>`;
-    }
-    userlist.innerHTML += "</ul>";
-    userlist.innerHTML += getTitleEditHtml();
+    html += getTitleEditHtml();
+    userlist.innerHTML = html;
 }
 
 function getTitleEditHtml() {
@@ -55,6 +56,15 @@ function removeUser(index) {
     localStorage.setItem("names", JSON.stringify(names));
     drawWheel();
     updateUserList();
+}
+
+function removeAllUsers() {
+    if (confirm("Are you sure you want to remove all names?")) {
+        names = [];
+        localStorage.setItem("names", JSON.stringify(names));
+        drawWheel();
+        updateUserList();
+    }
 }
 
 function drawWheel(angle = 0) {
@@ -211,17 +221,71 @@ function toggleAdmin() {
     }
 }
 
+// Add this function to handle file upload and add names
+function uploadNameList(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const content = e.target.result;
+        // Split by line, trim, and filter out empty lines
+        const lines = content.split(/\r?\n/).map(line => line.trim()).filter(line => line);
+        let added = false;
+        for (const line of lines) {
+            // Avoid duplicates (case-insensitive)
+            if (!names.some(n => n.toLowerCase() === line.toLowerCase())) {
+                names.push(line);
+                added = true;
+            }
+        }
+        if (added) {
+            localStorage.setItem("names", JSON.stringify(names));
+            drawWheel();
+            updateUserList();
+        }
+    };
+    reader.readAsText(file);
+}
+
 // Initial draw and start auto-spin on load
 drawWheel();
 updateUserList();
 startAutoSpin();
 
+// Initial draw and start auto-spin on load
+drawWheel();
+updateUserList();
+startAutoSpin();
+// Initial draw and start auto-spin on load
+drawWheel();
+updateUserList();
+startAutoSpin();
 
-// Initial draw and start auto-spin on load
-drawWheel();
-updateUserList();
-startAutoSpin();
-// Initial draw and start auto-spin on load
-drawWheel();
-updateUserList();
-startAutoSpin();
+// Add this after DOM is loaded or at the end of the file
+// Create the upload input if not present and wire up the handler
+(function() {
+    // Try to find or create the upload input for name list
+    let uploadInput = document.getElementById("nameListUpload");
+    if (!uploadInput) {
+        uploadInput = document.createElement("input");
+        uploadInput.type = "file";
+        uploadInput.id = "nameListUpload";
+        uploadInput.accept = ".txt";
+        uploadInput.style.display = "none";
+        document.body.appendChild(uploadInput);
+    }
+    uploadInput.addEventListener("change", uploadNameList);
+
+    // Add a button to trigger the upload (if not already present)
+    let headerActions = document.querySelector(".header-actions");
+    if (headerActions && !document.getElementById("nameListUploadBtn")) {
+        const btn = document.createElement("button");
+        btn.id = "nameListUploadBtn";
+        btn.textContent = "Upload Name List";
+        btn.onclick = function() {
+            uploadInput.value = ""; // reset so same file can be uploaded again
+            uploadInput.click();
+        };
+        headerActions.appendChild(btn);
+    }
+})();
