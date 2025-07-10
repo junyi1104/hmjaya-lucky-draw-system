@@ -30,9 +30,6 @@
     <!-- Export -->
     <button onclick="exportNames()">Export Names</button>
 
-    <!-- Show/hide user list -->
-    <button onclick="toggleUserList()">Show/Hide User List</button>
-
     <!-- Edit title -->
     <div style="margin-top:12px;">
       <label for="editTitleInput"><b>Edit Title:</b></label><br />
@@ -46,25 +43,27 @@
 
     <!-- Title color picker -->
     <div style="margin-top:16px;">
-      <label for="titleColorPicker"><b>title color picker：</b></label><br />
+      <label for="titleColorPicker"><b>Title Color Picker:</b></label><br />
       <input type="color" id="titleColorPicker" style="width:60px;height:40px;border:none;cursor:pointer;" />
     </div>
 
     <!-- Winner List 字体颜色选择器 -->
     <div style="margin-top:16px;">
-      <label for="winnerFontColorPicker"><b>winner list color picker：</b></label><br />
+      <label for="winnerFontColorPicker"><b>Winner List Color Picker:</b></label><br />
       <input type="color" id="winnerFontColorPicker" style="width:60px;height:40px;border:none;cursor:pointer;" />
     </div>
+
+    <!-- 用户名单管理 -->
+    <div id="userlist" class="user-list-box" style="display:block; margin-top:16px;"></div>
   </div>
 
+  <!-- Page Header（页面标题） -->
+  <header class="main-header">
+    <h1>Lucky Wheel Draw</h1>
+  </header>
 
-    <!-- Page Header（页面标题） -->
-    <header class="main-header">
-      <h1>Lucky Wheel Draw</h1>
-    </header>
-
-    <!-- Main layout（主布局） -->
-    <div class="main-flex">
+  <!-- Main layout（主布局） -->
+  <div class="main-flex">
 
     <!-- Winner box（历史中奖者名单） -->
     <div class="winner-container">
@@ -77,7 +76,6 @@
       </div>
     </div>
 
-
     <!-- Wheel & input（转盘和输入框） -->
     <div class="container wheel-container">
       <input type="text" id="username" placeholder="Enter name">
@@ -86,9 +84,6 @@
       <canvas id="wheelcanvas"></canvas>
       <button onclick="spinWheel()">Spin</button>
     </div>
-
-    <!-- User list container（用户名单列表） -->
-    <div id="userlist" class="user-list-box" style="display:none;"></div>
   </div>
 
   <!-- Background music（背景音乐播放器） -->
@@ -102,34 +97,19 @@
     🔊 Toggle Music
   </button>
 
-  
-    <!-- 🎯 自定义中奖弹窗 | Custom Winner Popup -->
-    <div id="customPopup" class="popup hidden">
-      <div class="popup-content">
-        <h2>🎯 Winner!</h2> <!-- 标题 / Title -->
-        <p id="winnerNameDisplay"></p> <!-- 显示中奖者名字 / Display winner name -->
-        <button onclick="closePopup()">OK</button> <!-- 关闭按钮 / Close button -->
-      </div>
+  <!-- 🎯 自定义中奖弹窗 | Custom Winner Popup -->
+  <div id="customPopup" class="popup hidden">
+    <div class="popup-content">
+      <h2>🎯 Winner!</h2>
+      <p id="winnerNameDisplay"></p>
+      <button onclick="closePopup()">OK</button>
     </div>
+  </div>
 
-    <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:10000;"></canvas>
+  <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:10000;"></canvas>
 
-
-  <!-- Basic script for toggling（基础功能控制） -->
+  <!-- 基础控制脚本 -->
   <script>
-    // Toggle admin panel（切换管理面板）
-    function toggleAdminPanel() {
-      document.getElementById('adminPanel').classList.toggle('show');
-    }
-
-    // Toggle user list（切换用户列表）
-    function toggleUserList() {
-      const list = document.getElementById("userlist");
-      if (!list) return;
-      list.style.display = list.style.display === "none" || !list.style.display ? "block" : "none";
-    }
-
-    // Toggle background music（控制音乐播放/暂停）
     function toggleMusic() {
       const bgMusic = document.getElementById("bgMusic");
       if (bgMusic.paused) {
@@ -138,14 +118,12 @@
         bgMusic.pause();
       }
     }
-
   </script>
 
-<!-- Confetti Library -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
-<!-- 你的主脚本 -->
-<script src="script.js"></script>
-
+  <!-- 你的主脚本 -->
+  <script src="script.js"></script>
 </body>
 </html>
