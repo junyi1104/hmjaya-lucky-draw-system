@@ -255,10 +255,10 @@ button:hover, .export-btn:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   color: #000;
   max-height: 250px;
-  max-width: 220px;
-  min-width: 180px;
+  max-width: 300px;     /* ✅ 修改宽度 */
+  min-width: 300px;     /* ✅ 一起加 */
   overflow-y: auto;
-  font-size: 14px;
+  font-size: 20px; /* ✅ 加大字体 */
   line-height: 1.4;
   text-align: left;
 }
@@ -266,14 +266,16 @@ button:hover, .export-btn:hover {
 
 
 #winner-list ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin: 10px 0 0 0;
+  list-style: none;      /* 移除点 */
+  padding-left: 0;       /* 可选：取消默认缩进 */
+  margin: 0;
 }
+
 
 #winner-list li {
   padding: 4px 0;
-  font-weight: 500;
+  font-size: 18px; /* ✅ 如果要更具体调整每一项 */
+  font-weight: 600; /* 可选：加粗一点 */
 }
 
 #winner-list h3 {
@@ -303,3 +305,88 @@ button:hover, .export-btn:hover {
 .admin-panel button:hover {
   color: red; /* 悬停时文字变红 */
 }
+
+/* ======= 弹窗外壳 popup ======= */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.2);  /* 毛玻璃背景 */
+  backdrop-filter: blur(12px);
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+
+/* 显示时 */
+.popup.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+/* 隐藏时 */
+.popup.hidden {
+  display: none !important;
+}
+
+
+/* ======= 弹窗内容 popup-content ======= */
+.popup-content {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: popIn 0.5s ease forwards;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* 标题样式 */
+.popup-content h2 {
+  color: #d63384;
+  font-size: 2em;
+}
+
+/* 中奖人名字 */
+.popup-content p {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #333;
+  margin: 16px 0;
+}
+
+
+/* 按钮样式 */
+.popup-content button {
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.popup-content button:hover {
+  background: #218838;
+}
+
