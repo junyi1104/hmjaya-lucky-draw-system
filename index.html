@@ -70,6 +70,9 @@
     <div class="winner-container">
       <div id="winner-list">
         <h3 style="margin-top: 0; color: #004466;">🎉 Winner List</h3>
+        <button onclick="clearWinners()" style="padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer;">
+          Clear
+        </button>
         <ul></ul> <!-- JS 会填入 <li> -->
       </div>
     </div>
@@ -99,6 +102,19 @@
     🔊 Toggle Music
   </button>
 
+  
+    <!-- 🎯 自定义中奖弹窗 | Custom Winner Popup -->
+    <div id="customPopup" class="popup hidden">
+      <div class="popup-content">
+        <h2>🎯 Winner!</h2> <!-- 标题 / Title -->
+        <p id="winnerNameDisplay"></p> <!-- 显示中奖者名字 / Display winner name -->
+        <button onclick="closePopup()">OK</button> <!-- 关闭按钮 / Close button -->
+      </div>
+    </div>
+
+    <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:10000;"></canvas>
+
+
   <!-- Basic script for toggling（基础功能控制） -->
   <script>
     // Toggle admin panel（切换管理面板）
@@ -122,9 +138,14 @@
         bgMusic.pause();
       }
     }
+
   </script>
 
-  <!-- External JS logic（主功能逻辑） -->
-  <script src="script.js"></script>
+<!-- Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+<!-- 你的主脚本 -->
+<script src="script.js"></script>
+
 </body>
 </html>
