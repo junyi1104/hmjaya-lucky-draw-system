@@ -122,8 +122,10 @@ button:hover, .export-btn:hover {
   text-align: left;
   font-size: 16px;
   box-shadow: 0 0 6px rgba(0,0,0,0.08);
-  display: none; /* 默认隐藏，仅 admin 时显示 */
+  display: block; /* 确保在 adminPanel 中显示 */
+  color: #000; /* ✅ 设为黑色字体 */
 }
+
 
 .user-list-box ul {
   list-style: none;
@@ -137,9 +139,10 @@ button:hover, .export-btn:hover {
   align-items: center;
   padding: 2px 0;
   border-bottom: 1px solid #28a745; /* 绿色分隔线 */
+  color: #000; /* ✅ 保证 li 内文字为黑色 */
 }
 
-.user-list-box li:last-child {
+..user-list-box li:last-child {
   border-bottom: none;
 }
 
@@ -156,6 +159,14 @@ button:hover, .export-btn:hover {
 
 .user-list-box button:hover {
   background: #b52a37;
+}
+
+/* “No users” 提示文字 */
+.user-list-box .no-users {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px 0;
 }
 
 /* =====================
