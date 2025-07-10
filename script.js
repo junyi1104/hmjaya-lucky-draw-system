@@ -212,7 +212,7 @@ function spinWheel() {
             const winnerName = names[winnerIndex];
 
             setTimeout(() => {
-                alert("🎯 Winner is: " + winnerName);
+                showPopup(winnerName);
                 names.splice(winnerIndex, 1);
                 localStorage.setItem("names", JSON.stringify(names));
                 winners.push(winnerName);
@@ -284,11 +284,12 @@ function updateWinnerList() {
     }
     winners = JSON.parse(localStorage.getItem("winners") || "[]");
     ul.innerHTML = "";
-    winners.forEach(name => {
+    winners.forEach((name, index) => {
         const li = document.createElement("li");
-        li.textContent = name;
+        li.textContent = `${index + 1}. ${name}`;
         ul.appendChild(li);
-    });
+});
+
 }
 
 function clearWinners() {
@@ -387,5 +388,53 @@ function insertName() {
     drawWheel();
     updateUserList();
 }
+
+function showPopup(winnerName) {
+    const popup = document.getElementById("customPopup");
+    const nameDisplay = document.getElementById("winnerNameDisplay");
+    nameDisplay.textContent = winnerName;
+
+    popup.classList.add("show");      // ✅ 加回这一句
+    popup.classList.remove("hidden"); // ✅ 保留
+    launchConfetti();                 // ✅ 彩带继续执行
+}
+
+function closePopup() {
+    const popup = document.getElementById("customPopup");
+    popup.classList.remove("show");   // ✅ 先移除 show 触发淡出动画
+    setTimeout(() => {
+        popup.classList.add("hidden");  // ✅ 延迟隐藏元素
+    }, 300); // 根据 CSS 动画时长调整
+}
+
+
+
+
+function launchConfetti() {
+  const duration = 2 * 1000;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    confetti({
+      particleCount: 5,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 }
+    });
+    confetti({
+      particleCount: 5,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 }
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
+
+
+
 
 
