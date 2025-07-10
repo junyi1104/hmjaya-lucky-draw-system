@@ -136,7 +136,7 @@ function updateUserList() {
         html += `<button onclick="removeAllUsers()" style="margin-top:16px;background:#dc3545;">Remove All</button>`;
     }
 
-    html += getTitleEditHtml();
+    
     userlist.innerHTML = html;
 }
 
