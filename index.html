@@ -19,6 +19,9 @@
       <button onclick="closeAdminPanel()" style="background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
     </div>
 
+    <label for="volumeSlider"><b>Background Music Volume:</b></label>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1" />
+
     <!-- Upload background -->
     <button onclick="document.getElementById('bgUpload').click()">Upload Background</button>
     <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBackground(event)" />
