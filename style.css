@@ -142,7 +142,7 @@ button:hover, .export-btn:hover {
   color: #000; /* ✅ 保证 li 内文字为黑色 */
 }
 
-..user-list-box li:last-child {
+.user-list-box li:last-child {
   border-bottom: none;
 }
 
@@ -399,5 +399,32 @@ button:hover, .export-btn:hover {
 
 .popup-content button:hover {
   background: #218838;
+}
+
+@media (max-width: 768px) {
+  .main-flex {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .container, .wheel-container {
+    width: 95% !important;
+    min-width: auto;
+  }
+
+  .admin-panel {
+    width: 100%;
+    right: -100%;
+  }
+
+  .admin-panel.show {
+    right: 0;
+  }
+
+  #winner-list {
+    left: 10px;
+    top: 80px;
+    max-width: 90vw;
+  }
 }
 
