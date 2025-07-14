@@ -128,5 +128,67 @@
 
   <!-- 你的主脚本 -->
   <script src="script.js"></script>
+  
+  <script>
+  window.addEventListener("message", function (event) {
+    const { type, data } = event.data;
+
+    switch (type) {
+      case "updateTitle":
+        updateLiveTitle(data);
+        break;
+
+      case "titleColor":
+        const title = document.querySelector(".main-header h1");
+        title.style.color = data;
+        localStorage.setItem("titleColor", data);
+        break;
+
+      case "winnerFontColor":
+        const winnerList = document.getElementById("winner-list");
+        winnerList.style.color = data;
+        winnerList.querySelector("h3").style.color = data;
+        localStorage.setItem("winnerFontColor", data);
+        break;
+
+      case "uploadBackground":
+        document.body.style.backgroundImage = `url('${data}')`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundRepeat = "no-repeat";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundAttachment = "fixed";
+        break;
+
+      case "uploadNameList":
+        const lines = atob(data.split(",")[1]) // base64 解码
+          .split(/\r?\n/)
+          .map(l => l.trim())
+          .filter(Boolean);
+        let added = false;
+        for (const line of lines) {
+          if (!names.includes(line)) {
+            names.push(line);
+            added = true;
+          }
+        }
+        if (added) {
+          localStorage.setItem("names", JSON.stringify(names));
+          drawWheel();
+          updateUserList();
+        }
+        break;
+
+      case "exportNames":
+        exportNames();
+        break;
+
+      case "bgVolume":
+        const bgMusic = document.getElementById("bgMusic");
+        if (bgMusic) bgMusic.volume = parseFloat(data);
+        break;
+    }
+  });
+</script>
+
 </body>
 </html>
