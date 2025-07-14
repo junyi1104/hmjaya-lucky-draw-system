@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lucky Draw Admin Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #00698f;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 300px;
+    }
+    button {
+      padding: 10px 16px;
+      margin-top: 12px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+
+  <label>🎯 修改标题</label>
+  <input type="text" id="titleInput" placeholder="Enter new title..." />
+  <button onclick="sendTitle()">Update Title</button>
+
+  <label>👤 添加名字</label>
+  <input type="text" id="nameInput" placeholder="Enter name..." />
+  <button onclick="sendInsertName()">Insert Name</button>
+
+  <label>🎵 控制音乐</label>
+  <button onclick="sendToggleMusic()">Toggle Music</button>
+
+  <script>
+    const drawWindow = window.open('https://junyi1104.github.io/hmjaya-lucky-draw-system/index.html', 'lucky-draw');
+
+    function sendMessage(type, data) {
+      drawWindow?.postMessage({ type, data }, '*');
+    }
+
+    function sendTitle() {
+      const newTitle = document.getElementById("titleInput").value;
+      sendMessage('update-title', newTitle);
+    }
+
+    function sendInsertName() {
+      const newName = document.getElementById("nameInput").value;
+      sendMessage('insert-name', newName);
+    }
+
+    function sendToggleMusic() {
+      sendMessage('toggle-music', null);
+    }
+  </script>
+</body>
+</html>
