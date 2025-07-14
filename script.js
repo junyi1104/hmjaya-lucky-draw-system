@@ -27,12 +27,11 @@ let spinSound = null;
   const savedTitle = localStorage.getItem("pageTitle");
   if (savedTitle) titleEl.textContent = savedTitle;
 
-  // 🎨 标题颜色设置
   const colorPicker = document.getElementById("titleColorPicker");
   const savedColor = localStorage.getItem("titleColor");
   if (savedColor) {
     titleEl.style.color = savedColor;
-    colorPicker.value = savedColor;
+    if (colorPicker) colorPicker.value = savedColor;
   }
   colorPicker?.addEventListener("input", () => {
     const newColor = colorPicker.value;
@@ -40,14 +39,13 @@ let spinSound = null;
     localStorage.setItem("titleColor", newColor);
   });
 
-  // 🏆 中奖名单颜色
   const winnerList = document.getElementById("winner-list");
   const winnerColorPicker = document.getElementById("winnerFontColorPicker");
   const savedWinnerColor = localStorage.getItem("winnerFontColor");
   if (savedWinnerColor) {
     winnerList.style.color = savedWinnerColor;
     winnerList.querySelector("h3").style.color = savedWinnerColor;
-    winnerColorPicker.value = savedWinnerColor;
+    if (winnerColorPicker) winnerColorPicker.value = savedWinnerColor;
   }
   winnerColorPicker?.addEventListener("input", () => {
     const newColor = winnerColorPicker.value;
@@ -110,46 +108,13 @@ function drawWheel(angle = 0) {
 }
 
 // ============================
-// 👥 用户列表管理
-// ============================
-function updateUserList() {
-  const userlist = document.getElementById("userlist");
-  if (!userlist) return;
-
-  let html = names.length === 0 ? "<em class='no-users'>No users</em>" : "<b>User List:</b><ul>";
-  names.forEach((name, i) => {
-    html += `<li><span>${name}</span><button onclick="removeUser(${i})">Remove</button></li>`;
-  });
-  html += names.length > 0 ? "</ul><button onclick='removeAllUsers()' style='margin-top:16px;background:#dc3545;'>Remove All</button>" : "";
-  userlist.innerHTML = html;
-}
-
-function removeUser(index) {
-  names.splice(index, 1);
-  localStorage.setItem("names", JSON.stringify(names));
-  drawWheel();
-  updateUserList();
-}
-
-function removeAllUsers() {
-    playClickSound(); // ✅ 添加点击音效
-  if (confirm("Are you sure you want to remove all names?")) {
-    names = [];
-    localStorage.setItem("names", JSON.stringify(names));
-    drawWheel();
-    updateUserList();
-  }
-}
-
-// ============================
 // 🎰 抽奖逻辑
 // ============================
 function spinWheel() {
-    playClickSound(); // ✅ 添加点击音效
-    
+  playClickSound();
   if (names.length === 0) return alert("No names to draw.");
   stopAutoSpin();
-  playSpinSound();     // ✅ 播放转动音效
+  playSpinSound();
 
   const count = names.length;
   const arcSize = (2 * Math.PI) / count;
@@ -173,7 +138,7 @@ function spinWheel() {
       requestAnimationFrame(animateSpin);
     } else {
       currentAngle = angle % (2 * Math.PI);
-      stopSpinSound();  // ✅ 停止转动音效
+      stopSpinSound();
       const pointerAngle = (1.5 * Math.PI - currentAngle + 2 * Math.PI) % (2 * Math.PI);
       const winnerIndex = Math.floor(pointerAngle / arcSize);
       const winnerName = names[winnerIndex];
@@ -187,39 +152,12 @@ function spinWheel() {
         drawWheel();
         updateUserList();
         updateWinnerList();
+		startAutoSpin(); // ✅ 恢复缓慢旋转
       }, 100);
     }
   }
   requestAnimationFrame(animateSpin);
 }
-
-// ============================
-// 🎵 音效 & 背景音乐控制
-// ============================
-function playClickSound() {
-  const clickSound = new Audio("sound/click.mp3");
-  clickSound.volume = 0.5;
-  clickSound.play();
-}
-
-function toggleMusic() {
-  const audio = document.getElementById("bgMusic");
-  const btn = document.querySelector(".music-toggle-btn");
-  if (!audio || !btn) return;
-
-  if (audio.paused) {
-    audio.play().then(() => btn.textContent = "🔊").catch(() => alert("Playback blocked"));
-  } else {
-    audio.pause();
-    btn.textContent = "🔇";
-  }
-}
-
-const volumeSlider = document.getElementById("volumeSlider");
-const bgMusic = document.getElementById("bgMusic");
-volumeSlider?.addEventListener("input", () => {
-  if (bgMusic) bgMusic.volume = volumeSlider.value;
-});
 
 // ============================
 // 🎉 弹窗 & 彩带
@@ -236,7 +174,7 @@ function showPopup(winnerName) {
 }
 
 function closePopup() {
-    playClickSound(); // ✅ 添加点击音效
+  playClickSound();
   const popup = document.getElementById("customPopup");
   popup.classList.remove("show");
   setTimeout(() => popup.classList.add("hidden"), 300);
@@ -252,45 +190,44 @@ function launchConfetti() {
 }
 
 // ============================
-// 📂 导入导出名单
+// 🔊 音效控制
 // ============================
-function exportNames() {
-    playClickSound(); // ✅ 添加点击音效
-  const blob = new Blob([names.join("\n")], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "names.txt";
-  a.click();
-  URL.revokeObjectURL(url);
+function playClickSound() {
+  const clickSound = new Audio("sound/click.mp3");
+  clickSound.volume = 0.5;
+  clickSound.play();
 }
 
-function uploadNameList(event) {
-    playClickSound(); // ✅ 添加点击音效
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const lines = e.target.result.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    let added = false;
-    for (const line of lines) {
-      if (!names.includes(line)) {
-        names.push(line);
-        added = true;
-      }
-    }
-    if (added) {
-      localStorage.setItem("names", JSON.stringify(names));
-      drawWheel();
-      updateUserList();
-    }
-  };
-  reader.readAsText(file);
+function playSpinSound() {
+  spinSound = new Audio("sound/spin.mp3");
+  spinSound.loop = true;
+  spinSound.volume = 0.5;
+  spinSound.play().catch(err => {
+    console.warn("Spin sound autoplay blocked:", err);
+  });
 }
 
-// ============================
-// ✨ 其他功能
-// ============================
+function stopSpinSound() {
+  if (spinSound) {
+    spinSound.pause();
+    spinSound.currentTime = 0;
+    spinSound = null;
+  }
+}
+
+function toggleMusic() {
+  const audio = document.getElementById("bgMusic");
+  const btn = document.querySelector(".music-toggle-btn");
+  if (!audio || !btn) return;
+
+  if (audio.paused) {
+    audio.play().then(() => btn.textContent = "🔊").catch(() => alert("Playback blocked"));
+  } else {
+    audio.pause();
+    btn.textContent = "🔇";
+  }
+}
+
 function startAutoSpin() {
   autoSpin = true;
   function spin() {
@@ -307,6 +244,18 @@ function stopAutoSpin() {
   cancelAnimationFrame(autoSpinId);
 }
 
+function updateUserList() {
+  const userlist = document.getElementById("userlist");
+  if (!userlist) return;
+
+  let html = names.length === 0 ? "<em class='no-users'>No users</em>" : "<b>User List:</b><ul>";
+  names.forEach((name, i) => {
+    html += `<li><span>${name}</span><button onclick="removeUser(${i})">Remove</button></li>`;
+  });
+  html += names.length > 0 ? "</ul><button onclick='removeAllUsers()' style='margin-top:16px;background:#dc3545;'>Remove All</button>" : "";
+  userlist.innerHTML = html;
+}
+
 function updateWinnerList() {
   const container = document.querySelector("#winner-list ul");
   if (!container) return;
@@ -319,16 +268,33 @@ function updateWinnerList() {
   });
 }
 
-function clearWinners() {
-  if (confirm("Are you sure you want to clear the winner list?")) {
-    winners = [];
-    localStorage.setItem("winners", JSON.stringify(winners));
-    updateWinnerList();
+function removeUser(index) {
+  names.splice(index, 1);
+  localStorage.setItem("names", JSON.stringify(names));
+  drawWheel();
+  updateUserList();
+}
+
+function removeAllUsers() {
+  if (confirm("Are you sure you want to remove all names?")) {
+    names = [];
+    localStorage.setItem("names", JSON.stringify(names));
+    drawWheel();
+    updateUserList();
   }
 }
 
+function exportNames() {
+  const blob = new Blob([names.join("\n")], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "names.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function insertName() {
-  playClickSound();
   const input = document.getElementById("username");
   const name = input.value.trim();
   if (!name) return;
@@ -344,20 +310,7 @@ function insertName() {
   updateUserList();
 }
 
-document.getElementById("username").addEventListener("keydown", function (e) {
-  if (e.key === "Enter") insertName();
-});
-
-function updateLiveTitle(newTitle) {
-  const title = document.querySelector(".main-header h1");
-  if (title && newTitle.trim()) {
-    title.textContent = newTitle.trim();
-    localStorage.setItem("pageTitle", newTitle.trim());
-  }
-}
-
 function uploadBackground(event) {
-    playClickSound(); // ✅ 添加点击音效
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -371,33 +324,144 @@ function uploadBackground(event) {
   reader.readAsDataURL(file);
 }
 
-function showAdminPanel() {
-playClickSound(); // ✅ 添加点击音效
-  document.getElementById("adminPanel").classList.add("show");
-  document.querySelector(".admin-toggle-btn").style.display = "none";
-}
-
-function closeAdminPanel() {
-    playClickSound(); // ✅ 添加点击音效
-  document.getElementById("adminPanel").classList.remove("show");
-  document.querySelector(".admin-toggle-btn").style.display = "block";
-}
-
-// 播放转盘音效
-function playSpinSound() {
-  spinSound = new Audio("sound/spin.mp3");
-  spinSound.loop = true;  // 循环播放直到转盘停止
-  spinSound.volume = 0.5;
-  spinSound.play().catch(err => {
-    console.warn("Spin sound autoplay blocked:", err);
-  });
-}
-
-// 停止转盘音效
-function stopSpinSound() {
-  if (spinSound) {
-    spinSound.pause();
-    spinSound.currentTime = 0;
-    spinSound = null;
+function clearWinners() {
+  if (confirm("Are you sure you want to clear the winner list?")) {
+    winners = [];
+    localStorage.setItem("winners", JSON.stringify(winners));
+    updateWinnerList();
   }
 }
+
+function requestUserList() {
+  sendMessage("getUserList");
+}
+
+window.addEventListener("message", (event) => {
+  const { type, payload } = event.data;
+  if (type === "userList" && Array.isArray(payload)) {
+    const listEl = document.getElementById("userListDisplay");
+    listEl.innerHTML = "";
+    if (payload.length === 0) {
+      listEl.innerHTML = "<li><em>暂无用户</em></li>";
+    } else {
+      payload.forEach(name => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        listEl.appendChild(li);
+      });
+    }
+  }
+});
+
+
+// ============================
+// 📩 接收 admin.html 发来的控制消息（增强版）
+// ============================
+window.addEventListener("message", (event) => {
+  const { type, payload } = event.data;
+  switch (type) {
+    case "insertName":
+      if (!names.includes(payload)) {
+        names.push(payload);
+        localStorage.setItem("names", JSON.stringify(names));
+        drawWheel();
+        updateUserList();
+      }
+      break;
+
+    case "removeAllNames":
+      names = [];
+      localStorage.setItem("names", JSON.stringify(names));
+      drawWheel();
+      updateUserList();
+      break;
+
+    case "setTitle":
+      const titleEl = document.querySelector(".main-header h1");
+      if (titleEl && payload.trim()) {
+        titleEl.textContent = payload;
+        localStorage.setItem("pageTitle", payload);
+      }
+      break;
+
+    case "setVolume":
+      const bgMusic = document.getElementById("bgMusic");
+      if (bgMusic) {
+        bgMusic.volume = payload;
+        localStorage.setItem("bgVolume", payload);
+      }
+      break;
+
+    case "setTitleColor":
+      document.querySelector(".main-header h1").style.color = payload;
+      localStorage.setItem("titleColor", payload);
+      break;
+
+    case "setWinnerColor":
+      const winnerList = document.getElementById("winner-list");
+      winnerList.style.color = payload;
+      winnerList.querySelector("h3").style.color = payload;
+      localStorage.setItem("winnerFontColor", payload);
+      break;
+
+    case "setBackground":
+      document.body.style.backgroundImage = `url(${payload})`;
+      document.body.style.backgroundSize = "cover";
+      document.body.style.backgroundRepeat = "no-repeat";
+      document.body.style.backgroundPosition = "center";
+      document.body.style.backgroundAttachment = "fixed";
+      localStorage.setItem("bgImage", payload);
+      break;
+
+    case "uploadNameList":
+      if (Array.isArray(payload)) {
+        for (const name of payload) {
+          if (!names.includes(name)) names.push(name);
+        }
+        localStorage.setItem("names", JSON.stringify(names));
+        drawWheel();
+        updateUserList();
+      }
+      break;
+
+    case "requestNameExport":
+      exportNames();
+      break;
+
+    case "clearWinners":
+      winners = [];
+      localStorage.setItem("winners", JSON.stringify(winners));
+      updateWinnerList();
+      break;
+
+    case "spinNow":
+      spinWheel();
+      break;
+
+    case "toggleMusic":
+      toggleMusic();
+      break;
+
+    case "startAutoSpin":
+      startAutoSpin();
+      break;
+
+    case "stopAutoSpin":
+      stopAutoSpin();
+      break;
+
+    case "resetAllSettings":
+      names = [];
+      winners = [];
+      localStorage.clear();
+      drawWheel();
+      updateUserList();
+      updateWinnerList();
+      location.reload();
+      break;
+	case "getUserList":
+	  event.source.postMessage({ type: "userList", payload: names }, "*");
+	  break;
+
+  }
+});
