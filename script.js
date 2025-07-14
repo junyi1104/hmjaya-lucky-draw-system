@@ -401,3 +401,26 @@ function stopSpinSound() {
     spinSound = null;
   }
 }
+
+window.addEventListener("message", (event) => {
+  const { type, data } = event.data;
+
+  switch (type) {
+    case 'update-title':
+      updateLiveTitle(data);
+      break;
+    case 'insert-name':
+      if (data && !names.includes(data)) {
+        names.push(data);
+        localStorage.setItem("names", JSON.stringify(names));
+        drawWheel();
+        updateUserList();
+      }
+      break;
+    case 'toggle-music':
+      toggleMusic();
+      break;
+    default:
+      console.warn("Unknown message type:", type);
+  }
+});
