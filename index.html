@@ -8,57 +8,10 @@
 </head>
 <body>
 
-  <!-- Admin toggle button（管理按钮） -->
-  <button class="admin-toggle-btn" onclick="showAdminPanel()">Admin</button>
+  <!-- Admin 页面打开按钮 -->
+	<button class="admin-toggle-btn" onclick="openAdminWindow()">🔧 Admin Panel</button>
 
-  <!-- Admin panel（滑出式管理面板） -->
-  <div id="adminPanel" class="admin-panel">
-    <!-- 顶部栏含标题与关闭按钮 -->
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0;">Admin Panel</h3>
-      <button onclick="closeAdminPanel()" style="background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
-    </div>
 
-    <label for="volumeSlider"><b>Background Music Volume:</b></label>
-    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1" />
-
-    <!-- Upload background -->
-    <button onclick="document.getElementById('bgUpload').click()">Upload Background</button>
-    <input type="file" id="bgUpload" accept="image/*" style="display:none" onchange="uploadBackground(event)" />
-
-    <!-- Upload name list -->
-    <button onclick="document.getElementById('nameListUpload').click()">Upload Name List</button>
-    <input type="file" id="nameListUpload" accept=".txt" style="display:none" onchange="uploadNameList(event)" />
-
-    <!-- Export -->
-    <button onclick="exportNames()">Export Names</button>
-
-    <!-- Edit title -->
-    <div style="margin-top:12px;">
-      <label for="editTitleInput"><b>Edit Title:</b></label><br />
-      <input 
-        id="editTitleInput" 
-        type="text" 
-        oninput="updateLiveTitle(this.value)" 
-        style="width:100%;padding:6px;margin-top:6px;" 
-      />
-    </div>
-
-    <!-- Title color picker -->
-    <div style="margin-top:16px;">
-      <label for="titleColorPicker"><b>Title Color Picker:</b></label><br />
-      <input type="color" id="titleColorPicker" style="width:60px;height:40px;border:none;cursor:pointer;" />
-    </div>
-
-    <!-- Winner List 字体颜色选择器 -->
-    <div style="margin-top:16px;">
-      <label for="winnerFontColorPicker"><b>Winner List Color Picker:</b></label><br />
-      <input type="color" id="winnerFontColorPicker" style="width:60px;height:40px;border:none;cursor:pointer;" />
-    </div>
-
-    <!-- 用户名单管理 -->
-    <div id="userlist" class="user-list-box" style="display:block; margin-top:16px;"></div>
-  </div>
 
   <!-- Page Header（页面标题） -->
   <header class="main-header">
@@ -79,15 +32,11 @@
       </div>
     </div>
 
-    <!-- Wheel & input（转盘和输入框） -->
-    <div class="container wheel-container">
-      <input type="text" id="username" placeholder="Enter name">
-      <button onclick="insertName()">Insert</button>
-      <br><br>
-      <canvas id="wheelcanvas"></canvas>
-      <button onclick="spinWheel()">Spin</button>
-    </div>
-  </div>
+	<!-- Wheel only -->
+	<div class="container wheel-container">
+	  <canvas id="wheelcanvas"></canvas>
+	</div>
+
 
   <!-- Background music（背景音乐播放器） -->
   <audio id="bgMusic" loop autoplay>
@@ -128,5 +77,22 @@
 
   <!-- 你的主脚本 -->
   <script src="script.js"></script>
+  
+  <script>
+  let adminWindow = null;
+
+  function openAdminWindow() {
+    if (adminWindow && !adminWindow.closed) {
+      adminWindow.focus(); // 如果已打开，聚焦窗口
+    } else {
+      adminWindow = window.open(
+        'admin.html',
+        'AdminPanel',
+        'width=500,height=700,left=100,top=100,toolbar=no,menubar=no,resizable=no'
+      );
+    }
+  }
+</script>
+
 </body>
 </html>
