@@ -23,22 +23,26 @@ let spinSound = null;
   startAutoSpin();
   updateWinnerList();
 
+  // ========== 🎯 标题初始化 ==========
   const titleEl = document.querySelector(".main-header h1");
   const savedTitle = localStorage.getItem("pageTitle");
   if (savedTitle) titleEl.textContent = savedTitle;
 
+  // ========== 🎨 标题颜色初始化 ==========
   const colorPicker = document.getElementById("titleColorPicker");
   const savedColor = localStorage.getItem("titleColor");
   if (savedColor) {
     titleEl.style.color = savedColor;
     if (colorPicker) colorPicker.value = savedColor;
   }
+
   colorPicker?.addEventListener("input", () => {
     const newColor = colorPicker.value;
     titleEl.style.color = newColor;
     localStorage.setItem("titleColor", newColor);
   });
 
+  // ========== 🎨 Winner List 字体颜色初始化 ==========
   const winnerList = document.getElementById("winner-list");
   const winnerColorPicker = document.getElementById("winnerFontColorPicker");
   const savedWinnerColor = localStorage.getItem("winnerFontColor");
@@ -47,13 +51,31 @@ let spinSound = null;
     winnerList.querySelector("h3").style.color = savedWinnerColor;
     if (winnerColorPicker) winnerColorPicker.value = savedWinnerColor;
   }
+
   winnerColorPicker?.addEventListener("input", () => {
     const newColor = winnerColorPicker.value;
     winnerList.style.color = newColor;
     winnerList.querySelector("h3").style.color = newColor;
     localStorage.setItem("winnerFontColor", newColor);
   });
+
+  // ========== 🎵 背景音乐初始化 ==========
+  const bgMusic = document.getElementById("bgMusic");
+  const savedVol = parseFloat(localStorage.getItem("bgVolume"));
+
+  if (bgMusic) {
+    // 设置背景音乐音量
+    bgMusic.volume = isNaN(savedVol) ? 1 : savedVol;
+
+    // 避免 reset 后自动播放，只有在音量 > 0 时播放
+    if (bgMusic.volume > 0) {
+      bgMusic.play().catch(err => {
+        console.warn("🎵 背景音乐自动播放被浏览器阻止：", err);
+      });
+    }
+  }
 })();
+
 
 // ============================
 // 🎨 绘制转盘
@@ -218,15 +240,23 @@ function stopSpinSound() {
 function toggleMusic() {
   const audio = document.getElementById("bgMusic");
   const btn = document.querySelector(".music-toggle-btn");
-  if (!audio || !btn) return;
+  if (!audio) return;
 
   if (audio.paused) {
-    audio.play().then(() => btn.textContent = "🔊").catch(() => alert("Playback blocked"));
+    audio.play()
+      .then(() => {
+        if (btn) btn.textContent = "🔇";
+      })
+      .catch(err => {
+        console.warn("🎵 背景音乐播放被阻止：", err);
+        if (btn) btn.textContent = "🔊"; // fallback
+      });
   } else {
     audio.pause();
-    btn.textContent = "🔇";
+    if (btn) btn.textContent = "🔊";
   }
 }
+
 
 function startAutoSpin() {
   autoSpin = true;
@@ -360,14 +390,17 @@ window.addEventListener("message", (event) => {
 window.addEventListener("message", (event) => {
   const { type, payload } = event.data;
   switch (type) {
-    case "insertName":
-      if (!names.includes(payload)) {
-        names.push(payload);
-        localStorage.setItem("names", JSON.stringify(names));
-        drawWheel();
-        updateUserList();
-      }
-      break;
+	case "insertName":
+	  if (!names.includes(payload)) {
+		names.push(payload);
+		localStorage.setItem("names", JSON.stringify(names));
+		drawWheel();
+		updateUserList();
+	  } else {
+		// 发送重复提示回 admin.html
+		event.source.postMessage({ type: "nameDuplicate", payload }, "*");
+	  }
+	  break;
 
     case "removeAllNames":
       names = [];
@@ -449,19 +482,6 @@ window.addEventListener("message", (event) => {
     case "stopAutoSpin":
       stopAutoSpin();
       break;
-
-    case "resetAllSettings":
-      names = [];
-      winners = [];
-      localStorage.clear();
-      drawWheel();
-      updateUserList();
-      updateWinnerList();
-      location.reload();
-      break;
-	case "getUserList":
-	  event.source.postMessage({ type: "userList", payload: names }, "*");
-	  break;
 
   }
 });
