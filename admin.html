@@ -33,15 +33,38 @@
     .secondary {
       background-color: #6c757d;
     }
+	
+	input[type="range"] {
+	  width: 100%;
+	  height: 6px;
+	  appearance: none;
+	  background: #28a745;
+	  border-radius: 3px;
+	  outline: none;
+	}
+
+	input[type="range"]::-webkit-slider-thumb {
+	  appearance: none;
+	  width: 14px;
+	  height: 14px;
+	  border-radius: 50%;
+	  background: #fff;
+	  border: 2px solid #28a745;
+	  cursor: pointer;
+	  margin-top: -4px;
+	}
+
   </style>
 </head>
 <body>
   <h2>🎛️ Lucky Draw Admin Panel</h2>
 
   <!-- 插入新名字 -->
-  <label>插入名字</label>
-  <input id="nameInput" placeholder="输入名字" onkeydown="if (event.key === 'Enter') sendInsertName()" />
-  <button onclick="sendInsertName()">插入</button>
+	<label>插入名字</label>
+	<input id="nameInput" placeholder="输入名字" onkeydown="if (event.key === 'Enter') sendInsertName()" />
+	<button onclick="sendInsertName()">插入</button>
+	<div id="duplicateWarning" style="color: red; font-weight: bold;"></div>
+
 
   <!-- 清除所有名字 -->
   <button class="danger" onclick="sendRemoveAllNames()">清空所有名字</button>
@@ -88,9 +111,22 @@
   <button onclick="sendSpin()">🎯 开始抽奖</button>
   <button class="secondary" onclick="toggleAutoSpin()">🔄 自动旋转 On/Off</button>
   <button class="secondary" onclick="toggleMusicRemote()">🔊 播放 / 暂停音乐</button>
-  <button class="danger" onclick="sendResetAll()">🧹 重置所有设置</button>
 
   <script>
+ 
+	  // 接收来自 index.html 的消息
+	  window.addEventListener("message", (event) => {
+		const { type, payload } = event.data;
+		if (type === "nameDuplicate") {
+		  const warningEl = document.getElementById("duplicateWarning");
+		  warningEl.textContent = `⚠️ 名字 "${payload}" 已存在！`;
+		  // 3秒后自动清除
+		  setTimeout(() => {
+			warningEl.textContent = "";
+		  }, 3000);
+		}
+	  });
+
     let autoSpinEnabled = true;
 
     function sendMessage(type, payload) {
@@ -184,11 +220,6 @@
       sendMessage("toggleMusic");
     }
 
-    function sendResetAll() {
-      if (confirm("确认重置所有设置？")) {
-        sendMessage("resetAllSettings");
-      }
-    }
   </script>
 </body>
 </html>
