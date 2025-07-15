@@ -25,9 +25,6 @@
     <div class="winner-container">
       <div id="winner-list">
         <h3 style="margin-top: 0; color: #004466;">🎉 Winner List</h3>
-        <button onclick="clearWinners()" style="padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer;">
-          Clear
-        </button>
         <ul></ul> <!-- JS 会填入 <li> -->
       </div>
     </div>
@@ -39,15 +36,11 @@
 
 
   <!-- Background music（背景音乐播放器） -->
-  <audio id="bgMusic" loop autoplay>
+  <audio id="bgMusic" loop>
     <source src="music/background.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
   </audio>
 
-  <!-- Music toggle button（音乐开关按钮） -->
-  <button class="music-toggle-btn" onclick="toggleMusic()" style="position:fixed; bottom:20px; right:20px; z-index:1000;">
-    🔊 Toggle Music
-  </button>
 
   <!-- 🎯 自定义中奖弹窗 | Custom Winner Popup -->
   <div id="customPopup" class="popup hidden">
