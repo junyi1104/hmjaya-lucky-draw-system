@@ -33,38 +33,34 @@
     .secondary {
       background-color: #6c757d;
     }
-	
-	input[type="range"] {
-	  width: 100%;
-	  height: 6px;
-	  appearance: none;
-	  background: #28a745;
-	  border-radius: 3px;
-	  outline: none;
-	}
-
-	input[type="range"]::-webkit-slider-thumb {
-	  appearance: none;
-	  width: 14px;
-	  height: 14px;
-	  border-radius: 50%;
-	  background: #fff;
-	  border: 2px solid #28a745;
-	  cursor: pointer;
-	  margin-top: -4px;
-	}
-
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      appearance: none;
+      background: #28a745;
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #28a745;
+      cursor: pointer;
+      margin-top: -4px;
+    }
   </style>
 </head>
 <body>
   <h2>🎛️ Lucky Draw Admin Panel</h2>
 
   <!-- 插入新名字 -->
-	<label>插入名字</label>
-	<input id="nameInput" placeholder="输入名字" onkeydown="if (event.key === 'Enter') sendInsertName()" />
-	<button onclick="sendInsertName()">插入</button>
-	<div id="duplicateWarning" style="color: red; font-weight: bold;"></div>
-
+  <label>插入名字</label>
+  <input id="nameInput" placeholder="输入名字" onkeydown="if (event.key === 'Enter') sendInsertName()" />
+  <button onclick="sendInsertName()">插入</button>
+  <div id="duplicateWarning" style="color: red; font-weight: bold;"></div>
 
   <!-- 清除所有名字 -->
   <button class="danger" onclick="sendRemoveAllNames()">清空所有名字</button>
@@ -92,19 +88,45 @@
   <label>Winner List 字体颜色</label>
   <input type="color" id="winnerColorInput" onchange="sendWinnerColor()" />
 
-  <!-- 音量控制 -->
+  <!-- 背景音乐音量 -->
   <label>背景音乐音量</label>
   <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1" onchange="sendVolume()" />
 
-  <!-- 设置背景图 -->
+  <!-- 🔊 音效设置 -->
+    <h3>🔊 音效设置</h3>
+
+	<!-- 点击音效 -->
+	<div>
+	  <label><input type="checkbox" id="clickSoundToggle"> 启用点击音效</label>
+	  <input type="range" id="clickSoundVolume" min="0" max="1" step="0.01" />
+	  <button onclick="testClickSound()">测试点击音效</button>
+	</div>
+
+	<!-- 旋转音效 -->
+	<div>
+	  <label><input type="checkbox" id="spinSoundToggle"> 启用旋转音效</label>
+	  <input type="range" id="spinSoundVolume" min="0" max="1" step="0.01" />
+	  <button onclick="testSpinSound()">测试旋转音效</button>
+	</div>
+
+	<!-- 中奖音效 -->
+	<div>
+	  <label><input type="checkbox" id="winSoundToggle"> 启用中奖音效</label>
+	  <input type="range" id="winSoundVolume" min="0" max="1" step="0.01" />
+	  <button onclick="testWinSound()">测试中奖音效</button>
+	</div>
+
+	<!-- 保存按钮 -->
+	<button onclick="saveSoundSettings()">💾 保存音效设置</button>
+
+  <!-- 上传背景图 -->
   <label>上传背景图片</label>
   <input type="file" id="bgUpload" accept="image/*" onchange="handleBgUpload()" />
-  
-  <hr />
-	<h3>👥 当前名单</h3>
-	<ul id="userListDisplay" style="padding-left: 20px;"></ul>
-	<button onclick="requestUserList()">🔄 刷新名单</button>
 
+  <hr />
+  <h3>👥 当前名单</h3>
+  <ul id="userListDisplay" style="padding-left: 20px;"></ul>
+  <button onclick="requestUserList()">🔄 刷新名单</button>
 
   <!-- 新增控制 -->
   <hr />
@@ -113,19 +135,15 @@
   <button class="secondary" onclick="toggleMusicRemote()">🔊 播放 / 暂停音乐</button>
 
   <script>
- 
-	  // 接收来自 index.html 的消息
-	  window.addEventListener("message", (event) => {
-		const { type, payload } = event.data;
-		if (type === "nameDuplicate") {
-		  const warningEl = document.getElementById("duplicateWarning");
-		  warningEl.textContent = `⚠️ 名字 "${payload}" 已存在！`;
-		  // 3秒后自动清除
-		  setTimeout(() => {
-			warningEl.textContent = "";
-		  }, 3000);
-		}
-	  });
+    // 接收来自 index.html 的消息
+    window.addEventListener("message", (event) => {
+      const { type, payload } = event.data;
+      if (type === "nameDuplicate") {
+        const warningEl = document.getElementById("duplicateWarning");
+        warningEl.textContent = `⚠️ 名字 "${payload}" 已存在！`;
+        setTimeout(() => { warningEl.textContent = ""; }, 3000);
+      }
+    });
 
     let autoSpinEnabled = true;
 
@@ -176,11 +194,9 @@
       const title = document.getElementById("titleInput").value.trim();
       if (title) sendMessage("setTitle", title);
     }
-	 document.getElementById("titleInput").addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      sendSetTitle();
-    }
-	});
+    document.getElementById("titleInput").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") sendSetTitle();
+    });
 
     function sendTitleColor() {
       const color = document.getElementById("titleColorInput").value;
@@ -220,6 +236,86 @@
       sendMessage("toggleMusic");
     }
 
+    // 初始化加载音效设置
+    function loadSoundSettings() {
+      document.getElementById("clickToggle").checked = localStorage.getItem("clickSoundEnabled") !== "false";
+      document.getElementById("spinToggle").checked = localStorage.getItem("spinSoundEnabled") !== "false";
+      document.getElementById("winToggle").checked = localStorage.getItem("winSoundEnabled") !== "false";
+
+      document.getElementById("clickVolume").value = localStorage.getItem("clickSoundVolume") || 0.5;
+      document.getElementById("spinVolume").value = localStorage.getItem("spinSoundVolume") || 0.5;
+      document.getElementById("winVolume").value = localStorage.getItem("winSoundVolume") || 0.5;
+    }
+
+    // 保存音效设置
+    function saveSoundSettings() {
+      const clickEnabled = document.getElementById("clickToggle").checked;
+      const spinEnabled = document.getElementById("spinToggle").checked;
+      const winEnabled = document.getElementById("winToggle").checked;
+
+      const clickVol = document.getElementById("clickVolume").value;
+      const spinVol = document.getElementById("spinVolume").value;
+      const winVol = document.getElementById("winVolume").value;
+
+      localStorage.setItem("clickSoundEnabled", clickEnabled);
+      localStorage.setItem("spinSoundEnabled", spinEnabled);
+      localStorage.setItem("winSoundEnabled", winEnabled);
+      localStorage.setItem("clickSoundVolume", clickVol);
+      localStorage.setItem("spinSoundVolume", spinVol);
+      localStorage.setItem("winSoundVolume", winVol);
+
+      sendMessage("updateSoundSettings", {
+        clickEnabled,
+        spinEnabled,
+        winEnabled,
+        clickVol: parseFloat(clickVol),
+        spinVol: parseFloat(spinVol),
+        winVol: parseFloat(winVol),
+      });
+    }
+
+    function requestUserList() {
+      sendMessage("getUserList");
+    }
+	
+	function testClickSound() {
+	  const enabled = document.getElementById("clickSoundToggle").checked;
+	  const volume = parseFloat(document.getElementById("clickSoundVolume").value);
+	  if (!enabled) {
+		alert("点击音效已禁用，请先启用再测试！");
+		return;
+	  }
+	  const sound = new Audio("sound/click.mp3");
+	  sound.volume = volume;
+	  sound.play();
+	}
+
+	function testSpinSound() {
+	  const enabled = document.getElementById("spinSoundToggle").checked;
+	  const volume = parseFloat(document.getElementById("spinSoundVolume").value);
+	  if (!enabled) {
+		alert("旋转音效已禁用，请先启用再测试！");
+		return;
+	  }
+	  const sound = new Audio("sound/spin.mp3");
+	  sound.volume = volume;
+	  sound.play();
+	}
+
+	function testWinSound() {
+	  const enabled = document.getElementById("winSoundToggle").checked;
+	  const volume = parseFloat(document.getElementById("winSoundVolume").value);
+	  if (!enabled) {
+		alert("中奖音效已禁用，请先启用再测试！");
+		return;
+	  }
+	  const sound = new Audio("sound/win.mp3");
+	  sound.volume = volume;
+	  sound.play();
+	}
+
+
+    window.addEventListener("DOMContentLoaded", loadSoundSettings);
   </script>
 </body>
 </html>
