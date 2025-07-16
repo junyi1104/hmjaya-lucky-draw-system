@@ -190,20 +190,10 @@ function showPopup(winnerName) {
   nameDisplay.textContent = winnerName;
   popup.classList.add("show");
   popup.classList.remove("hidden");
-
-  const enabled = localStorage.getItem("winSoundEnabled") !== "false";
-  const volume = parseFloat(localStorage.getItem("winSoundVolume") || 0.5);
-  if (enabled) {
-    const winSound = new Audio("sound/win.mp3");
-    winSound.volume = volume;
-    winSound.play().catch(err => {
-      console.warn("🏆 中奖音效播放失败：", err);
-    });
-  }
-
+  const winSound = new Audio("sound/win.mp3");
+  winSound.play();
   launchConfetti();
 }
-
 
 function closePopup() {
   playClickSound();
@@ -225,31 +215,19 @@ function launchConfetti() {
 // 🔊 音效控制
 // ============================
 function playClickSound() {
-  const enabled = localStorage.getItem("clickSoundEnabled") !== "false";
-  const volume = parseFloat(localStorage.getItem("clickSoundVolume") || 0.5);
-  if (!enabled) return;
-
   const clickSound = new Audio("sound/click.mp3");
-  clickSound.volume = volume;
-  clickSound.play().catch(err => {
-    console.warn("🔈 点击音效播放失败：", err);
-  });
+  clickSound.volume = 0.5;
+  clickSound.play();
 }
-
 
 function playSpinSound() {
-  const enabled = localStorage.getItem("spinSoundEnabled") !== "false";
-  const volume = parseFloat(localStorage.getItem("spinSoundVolume") || 0.5);
-  if (!enabled) return;
-
   spinSound = new Audio("sound/spin.mp3");
   spinSound.loop = true;
-  spinSound.volume = volume;
+  spinSound.volume = 0.5;
   spinSound.play().catch(err => {
-    console.warn("🎵 旋转音效播放失败：", err);
+    console.warn("Spin sound autoplay blocked:", err);
   });
 }
-
 
 function stopSpinSound() {
   if (spinSound) {
@@ -504,27 +482,6 @@ window.addEventListener("message", (event) => {
     case "stopAutoSpin":
       stopAutoSpin();
       break;
-	
-	 // 🔊 新增音效设置同步：
-	case "updateSoundSettings":
-	  // ✅ 保存设置到 localStorage
-	  localStorage.setItem("clickSoundEnabled", payload.clickEnabled);
-	  localStorage.setItem("spinSoundEnabled", payload.spinEnabled);
-	  localStorage.setItem("winSoundEnabled", payload.winEnabled);
-	  localStorage.setItem("clickSoundVolume", payload.clickVol);
-	  localStorage.setItem("spinSoundVolume", payload.spinVol);
-	  localStorage.setItem("winSoundVolume", payload.winVol);
-
-	  // ✅ 实时应用背景音乐音量
-	  const bgVol = parseFloat(localStorage.getItem("bgVolume") || "1");
-	  const bgMusic = document.getElementById("bgMusic");
-	  if (bgMusic && !isNaN(bgVol)) {
-		bgMusic.volume = bgVol;
-	  }
-
-	  console.log("🔊 音效设置已更新并应用");
-	  break;
-
 
   }
 });
